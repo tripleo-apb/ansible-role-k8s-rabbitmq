@@ -1,7 +1,10 @@
 - name: create rabbitmq service
   k8s_v1_service:
+    host: "{{coe_host}}"
+    context: "{{kube_context}}"
+    kubeconfig: "{{config_file}}"
     name: rabbitmq
-    cluster_ip: "None"  # Currently broken for headless svc
+#    cluster_ip: "None"  # Currently broken for headless svc
     namespace: '{{ namespace }}'
     debug: yes
     labels:
@@ -21,6 +24,9 @@
 
 - name: create rabbitmq management service
   k8s_v1_service:
+    host: "{{coe_host}}"
+    context: "{{kube_context}}"
+    kubeconfig: "{{config_file}}"
     name: rabbitmq-mgmt
     namespace: '{{ namespace }}'
     labels:
@@ -36,6 +42,9 @@
 - name: Create rabbitmq configmaps
   ignore_errors: yes
   k8s_v1_config_map:
+    host: "{{coe_host}}"
+    context: "{{kube_context}}"
+    kubeconfig: "{{config_file}}"
     name: rabbitmq
     namespace: '{{ namespace }}'
     state: present
@@ -106,13 +115,16 @@
 
 - name: create rabbitmq statefulset
   k8s_v1beta1_stateful_set:
+    host: "{{coe_host}}"
+    context: "{{kube_context}}"
+    kubeconfig: "{{config_file}}"
     name: rabbitmq
     namespace: '{{ namespace }}'
-    state: present 
+    state: present
     spec_service_name: rabbitmq
     spec_template_metadata_name: rabbitmq
     replicas: '{{ replicas }}'
-    service_account_name: openstack
+#    service_account_name: openstack
     spec_template_metadata_labels:
       app: rabbitmq
       service: rabbitmq
@@ -138,4 +150,3 @@
       - name: kolla-config
         config_map:
           name: rabbitmq
-
