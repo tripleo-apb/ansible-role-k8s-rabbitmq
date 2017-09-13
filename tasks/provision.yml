@@ -1,43 +1,24 @@
-- name: create rabbitmq service
-  k8s_v1_service:
-    host: "{{coe_host}}"
-    context: "{{kube_context}}"
-    kubeconfig: "{{config_file}}"
-    name: rabbitmq
-#    cluster_ip: "None"  # Currently broken for headless svc
-    namespace: '{{ namespace }}'
-    debug: yes
-    labels:
-      app: rabbitmq
-      service: rabbitmq
-    selector:
-      app: rabbitmq
-      service: rabbitmq
-    ports:
-      - port: 4369
-        name: epmd
-      - port: 5672
-        name: amqp
-      - port: 25672
-        name: comm
-  register: create-svc
+- name: Upload config files
+  template:
+    src: "{{item}}"
+    dest: /tmp/{{item}}
+    backup: yes
+    mode: 0644
+  with_items:
+    - rabbitmq.config
+    - rabbitmq-env.conf
 
-- name: create rabbitmq management service
-  k8s_v1_service:
-    host: "{{coe_host}}"
-    context: "{{kube_context}}"
-    kubeconfig: "{{config_file}}"
-    name: rabbitmq-mgmt
-    namespace: '{{ namespace }}'
-    labels:
-      app: rabbitmq
-      service: rabbitmq
-    selector:
-      app: rabbitmq
-      service: rabbitmq
-    ports:
-      - name: rabbitmq-mgmt
-        port: 15672
+- include: hiera.yml
+
+- name: Read configs into memory
+  slurp:
+    src: "/tmp/rabbitmq.config"
+  register: "rabbitmq_config"
+
+- name: Read configs into memory
+  slurp:
+    src: "/tmp/rabbitmq-env.conf"
+  register: "rabbitmq_env_conf"
 
 - name: Create rabbitmq configmaps
   ignore_errors: yes
@@ -82,36 +63,52 @@
             ]
         }
 
-      rabbitmq-env.conf: |
-        NODE_IP_ADDRESS=
-        NODE_PORT=
-        RABBITMQ_SERVER_ERL_ARGS="+K true +P 1048576 -kernel inet_default_connect_options [{nodelay,true},{raw,6,18,<<15000:64/native>>}] -kernel inet_default_listen_options [{raw,6,18,<<15000:64/native>>}]"
-
       rabbitmq.config: |
-        [
-          {rabbit, [
-            {tcp_listen_options, [
-                 binary,
-                 {packet,        raw},
-                 {reuseaddr,     true},
-                 {keepalive,     true},
-                 {backlog,       128},
-                 {nodelay,       true},
-                 {linger,        {true, 0}},
-                 {exit_on_close, false}
-            ]},
-            {tcp_listeners, [{"0.0.0.0", 5672}]},
-            {cluster_partition_handling, pause_minority},
-            {loopback_users, []},
-            {queue_master_locator, <<"min-masters">>},
-            {default_user, <<"guest">>},
-            {default_pass, <<"rabbitpass">>}
-          ]},
-          {kernel, [
-            {inet_dist_listen_max, 25672},
-            {inet_dist_listen_min, 25672}
-          ]}
-        ].
+        {{rabbitmq_config['content'] | b64decode}}
+
+      rabbitmq-env.conf: |
+        {{rabbitmq_env_conf['content'] | b64decode}}
+
+- name: create rabbitmq service
+  k8s_v1_service:
+    host: "{{coe_host}}"
+    context: "{{kube_context}}"
+    kubeconfig: "{{config_file}}"
+    name: rabbitmq
+#    cluster_ip: "None"  # Currently broken for headless svc
+    namespace: '{{ namespace }}'
+    debug: yes
+    labels:
+      app: rabbitmq
+      service: rabbitmq
+    selector:
+      app: rabbitmq
+      service: rabbitmq
+    ports:
+      - port: 4369
+        name: epmd
+      - port: 5672
+        name: amqp
+      - port: 25672
+        name: comm
+  register: create-svc
+
+- name: create rabbitmq management service
+  k8s_v1_service:
+    host: "{{coe_host}}"
+    context: "{{kube_context}}"
+    kubeconfig: "{{config_file}}"
+    name: rabbitmq-mgmt
+    namespace: '{{ namespace }}'
+    labels:
+      app: rabbitmq
+      service: rabbitmq
+    selector:
+      app: rabbitmq
+      service: rabbitmq
+    ports:
+      - name: rabbitmq-mgmt
+        port: 15672
 
 - name: create rabbitmq statefulset
   k8s_v1beta1_stateful_set:
@@ -124,7 +121,7 @@
     spec_service_name: rabbitmq
     spec_template_metadata_name: rabbitmq
     replicas: '{{ replicas }}'
-#    service_account_name: openstack
+    service_account_name: openstack
     spec_template_metadata_labels:
       app: rabbitmq
       service: rabbitmq

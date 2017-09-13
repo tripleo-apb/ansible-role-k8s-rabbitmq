@@ -1,0 +1,7 @@
+- name: Translate hieradata
+  include_role:
+    name: 'ansible-role-k8s-tripleo'
+  vars:
+    hieradata: '{{hiera_data}}'
+    hieradata_file: '{{hiera_data_file}}'
+    schema: {}
