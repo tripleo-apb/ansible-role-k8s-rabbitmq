@@ -9,3 +9,4 @@ hiera_data_file: ''
 replicas: 1
 
 rabbitmq_config: {}
+result: {}

@@ -4,4 +4,26 @@
   vars:
     hieradata: '{{hiera_data}}'
     hieradata_file: '{{hiera_data_file}}'
-    schema: {}
+    schema:
+      rabbitmq::default_user: rabbitmq_default_user
+      rabbitmq::default_pass: rabbitmq_default_pass
+      rabbitmq::delete_guest_user: rabbitmq_delete_guest
+      rabbitmq::wipe_db_on_cookie_change: rabbitmq_wipe_db_on_cookie_change
+      rabbitmq::port: rabbitmq_port
+      rabbitmq::package_provider: rabbitmq_package_provider
+      rabbitmq::package_source: rabbitmq_package_source
+      rabbitmq::repos_ensure: rabbitmq_repos_ensure
+      rabbitmq::tcp_keepalive: rabbitmq_tcp_keepalive
+      rabbitmq_environment: rabbitmq_environment
+      rabbitmq_kernel_variables: rabbitmq_kernel_variables
+      rabbitmq_config_variables: rabbitmq_config_variables
+      rabbitmq::erlang_cookie: rabbitmq_erlang_cookie
+      rabbitmq::interface: rabbitmq_interface
+      rabbitmq::nr_ha_queues: rabbitmq_nr_ha_queues
+      rabbitmq::ssl: rabbitmq_ssl
+      rabbitmq::ssl_port: rabbitmq_ssl_port
+      rabbitmq::ssl_depth: rabbitmq_ssl_depth
+      rabbitmq::ssl_only: rabbitmq_ssl_only
+      rabbitmq::ssl_interface: rabbitmq_ssl_interface
+
+  register: result

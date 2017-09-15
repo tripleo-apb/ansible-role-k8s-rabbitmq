@@ -1,14 +1,14 @@
-- name: Upload config files
-  template:
-    src: "{{item}}"
-    dest: /tmp/{{item}}
-    backup: yes
-    mode: 0644
-  with_items:
-    - rabbitmq.config
-    - rabbitmq-env.conf
-
 - include: hiera.yml
+
+- name: Generate config files
+  template:
+    src: rabbitmq-env.conf.j2
+    dest: /tmp/rabbitmq-env.conf
+
+- name: Generate config files
+  template:
+    src: rabbitmq.config.j2
+    dest: /tmp/rabbitmq.config
 
 - name: Read configs into memory
   slurp:
@@ -23,9 +23,6 @@
 - name: Create rabbitmq configmaps
   ignore_errors: yes
   k8s_v1_config_map:
-    host: "{{coe_host}}"
-    context: "{{kube_context}}"
-    kubeconfig: "{{config_file}}"
     name: rabbitmq
     namespace: '{{ namespace }}'
     state: present

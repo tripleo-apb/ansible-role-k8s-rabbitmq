@@ -1,0 +1,5 @@
+NODE_IP_ADDRESS={{result.conf_dict['rabbitmq_interface']}}
+NODE_PORT={{result.conf_dict['rabbitmq_port']}}
+{% for key, value in result.conf_dict['rabbitmq_environment'].iteritems() -%}
+  {{-key}}={{value-}}{% if loop.index != loop.length %}{{"\n"}}{% endif %}
+{% endfor -%}
