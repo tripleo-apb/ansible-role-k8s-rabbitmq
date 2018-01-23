@@ -1,14 +1,14 @@
 [
   {rabbit, [
     {% for key, value in result.conf_dict['rabbitmq_config_variables'].iteritems() -%}
-       { {{-key}}, {{value-}} }{% if loop.index != loop.length %},{{"\n"}}{% endif %}
-    {% endfor -%},
+       { {{-key}}, {{value-}} },{{"\n"}}
+    {% endfor -%}
     {default_user, <<"{{ result.conf_dict['rabbitmq_default_user'] }}">>},
     {default_pass, <<"{{ result.conf_dict['rabbitmq_default_pass'] }}">>}
   ]},
   {kernel, [
     {% for key, value in result.conf_dict['rabbitmq_kernel_variables'].iteritems() -%}
-       { {{-key}}, {{value-}} }{% if loop.index != loop.length %},{{"\n"}}{% endif %}
+       { {{-key}}, {{value-}} }{% if not loop.last %},{{"\n"}}{% endif %}
     {% endfor -%}
 ]},
   {rabbitmq_management, [
@@ -18,4 +18,3 @@
     ]}
   ]}
 ].
-
