@@ -118,7 +118,6 @@
     spec_service_name: rabbitmq
     spec_template_metadata_name: rabbitmq
     replicas: '{{ replicas }}'
-    service_account_name: openstack
     spec_template_metadata_labels:
       app: rabbitmq
       service: rabbitmq

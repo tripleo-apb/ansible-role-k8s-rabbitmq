@@ -2,8 +2,6 @@
   include_role:
     name: 'ansible-role-k8s-tripleo'
   vars:
-    hieradata: '{{hiera_data}}'
-    hieradata_file: '{{hiera_data_file}}'
     schema:
       rabbitmq::default_user: rabbitmq_default_user
       rabbitmq::default_pass: rabbitmq_default_pass

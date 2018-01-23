@@ -4,34 +4,6 @@ config_file: "~/.kube/config"
 action: provision
 namespace: openstack
 
-hiera_data: 
-  rabbit_ipv6: false
-  rabbitmq::default_pass: guestpass
-  rabbitmq::default_user: guest
-  rabbitmq::delete_guest_user: false
-  rabbitmq::erlang_cookie: elangC00kie123456789
-  rabbitmq::file_limit: 65436
-  rabbitmq::interface: 0.0.0.0
-  rabbitmq::package_source: undef
-  rabbitmq::port: 5672
-  rabbitmq::repos_ensure: false
-  rabbitmq::service_manage: false
-  rabbitmq::wipe_db_on_cookie_change: true
-  rabbitmq_config_variables: {
-    "loopback_users": "[]",
-    "cluster_partition_handling": "pause_minority",
-    "tcp_listen_options": "[binary, {packet, raw}, {reuseaddr, true}, {backlog, 128}, {nodelay, true}, {exit_on_close, false}, {keepalive, true}]",
-    "queue_master_locator": "<<\"min-masters\">>"
-  }
-  rabbitmq_environment: {
-    "RABBITMQ_SERVER_ERL_ARGS": "\"+K true +P 1048576 -kernel inet_default_connect_options [{nodelay,true},{raw,6,18,<<5000:64/native>>}] -kernel inet_default_listen_options [{raw,6,18,<<5000:64/native>>}]\"",
-  }
-  rabbitmq_kernel_variables: {
-    "inet_dist_listen_max": "25672",
-    "inet_dist_listen_min": "25672"
-  }
-  
-hiera_data_file: ''
 replicas: 1
 
 rabbitmq_config: {}
