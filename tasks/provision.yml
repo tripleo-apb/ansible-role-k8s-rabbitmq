@@ -20,6 +20,12 @@
     src: "/tmp/rabbitmq-env.conf"
   register: "rabbitmq_env_conf"
 
+# Create SA if it doesn't exist
+- name: create serviceaccount
+  k8s_v1_service_account:
+    name: "{{ service_account }}"
+    namespace: "{{ namespace }}"
+
 - name: Create rabbitmq configmaps
   ignore_errors: yes
   k8s_v1_config_map:

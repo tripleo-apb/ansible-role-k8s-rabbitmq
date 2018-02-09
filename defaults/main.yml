@@ -3,7 +3,7 @@ kube_context:
 config_file: 
 action: provision
 namespace: openstack
-service_account: default
+service_account: openstack
 
 replicas: 1
 
