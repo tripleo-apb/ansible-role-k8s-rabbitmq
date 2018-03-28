@@ -1,4 +1,4 @@
-coe_host: "https://127.0.0.1:8443"
+coe_host: 
 kube_context: 
 config_file: 
 action: provision
@@ -7,5 +7,9 @@ service_account: openstack
 
 replicas: 1
 
+rabbitmq_user: guest
+rabbitmq_password: rabbitmqpassword
+rabbitmq_interface: 0.0.0.0
+rabbitmq_port: 5672
 rabbitmq_config: {}
 result: {}

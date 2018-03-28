@@ -1,20 +1,23 @@
 [
   {rabbit, [
-    {% for key, value in result.conf_dict['rabbitmq_config_variables'].iteritems() -%}
-       { {{-key}}, {{value-}} },{{"\n"}}
-    {% endfor -%}
-    {default_user, <<"{{ result.conf_dict['rabbitmq_default_user'] }}">>},
-    {default_pass, <<"{{ result.conf_dict['rabbitmq_default_pass'] }}">>}
+    {tcp_listen_options, [binary, {packet, raw}, {reuseaddr, true}, {backlog, 128}, {nodelay, true}, {exit_on_close, false}, {keepalive, true}]},
+
+    {loopback_users, []},
+
+    {cluster_partition_handling, pause_minority},
+
+    {queue_master_locator, <<"min-masters">>},
+
+    {default_user, <<"{{rabbitmq_user}}">>},
+    {default_pass, <<"{{rabbitmq_password}}">>}
   ]},
   {kernel, [
-    {% for key, value in result.conf_dict['rabbitmq_kernel_variables'].iteritems() -%}
-       { {{-key}}, {{value-}} }{% if not loop.last %},{{"\n"}}{% endif %}
-    {% endfor -%}
-]},
+    {inet_dist_listen_min, 25672},
+    {inet_dist_listen_max, 25672}    ]},
   {rabbitmq_management, [
     {listener, [
-      {port, 1{{result.conf_dict['rabbitmq_port']-}} },
-      {ip, "{{result.conf_dict['rabbitmq_interface']}}"}
+      {port, 15672},
+      {ip, "0.0.0.0"}
     ]}
   ]}
 ].

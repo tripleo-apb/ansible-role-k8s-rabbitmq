@@ -1,4 +1,4 @@
-- include: hiera.yml
+#- include: hiera.yml
 
 - name: Generate config files
   template:

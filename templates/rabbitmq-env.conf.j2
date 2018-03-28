@@ -1,5 +1,3 @@
-NODE_IP_ADDRESS={{result.conf_dict['rabbitmq_interface']}}
-NODE_PORT={{result.conf_dict['rabbitmq_port']}}
-{% for key, value in result.conf_dict['rabbitmq_environment'].iteritems() -%}
-  {{-key}}={{value-}}{% if loop.index != loop.length %}{{"\n"}}{% endif %}
-{% endfor -%}
+NODE_IP_ADDRESS={{rabbitmq_interface}}
+NODE_PORT={{rabbitmq_port}}
+RABBITMQ_SERVER_ERL_ARGS="+K true +P 1048576 -kernel inet_default_connect_options [{nodelay,true},{raw,6,18,<<5000:64/native>>}] -kernel inet_default_listen_options [{raw,6,18,<<5000:64/native>>}]"
